@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+    <title>全景图上传</title>
+    <style>
+        html,body{
+            padding: 40px;
+        }
+        input{
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+    <input accept="image/*" name="upimage" id="upload_file" type="file" multiple><br>
+    <button>点击上传</button>
+    <script type="text/javascript">
+        let arr = [];
+        let json = {};
+        let title = "作家全景图";
+        $("#upload_file").change(function () {
+            let file = document.getElementById("upload_file").files;
+            for (let i=0;i<file.length;i++){
+                let r= new FileReader();
+                r.onload = function () {
+                    let base64 = r.result.substr(22);
+                    let fname = file[i].name;
+                    arr.push(fname+"@"+title+"$"+base64);
+                }
+                r.readAsDataURL(file[i]);
+            }
+
+            $("button").click(function () {
+                for (let i=0;i<arr.length;i++){
+                    json[i]=arr[i];
+                }
+                let json1 = JSON.stringify(json);
+                $.ajax({
+                    url:"http://192.168.0.199/panorama/img_upload.php",
+                    type:"post",
+                    data:json1,
+                    success:function (e) {
+                        console.log(e);
+                    }
+                })
+                //
+                /*for (let i=0;i<arr.length;i++){
+                    $.ajax({
+                        url:"http://192.168.0.199/panorama/pano_upload.php",
+                        type:"post",
+                        data:arr[i],
+                        success:function (e) {
+                            console.log(e);
+                        }
+                    })
+                }*/
+            })
+        })
+</script>
+</body>
+</html>
